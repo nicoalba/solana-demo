@@ -1,6 +1,6 @@
 # solana-demo
 
-This project is a basic Solana smart contract (program) built using Anchor with Rust-based tests. It serves as a starting point for learning and experimenting with Solana development in a Linux environment using WSL2.
+This project is a basic Solana smart contract (program) built with Anchor and a Rust template. It serves as a starting point for learning and experimenting with Solana development in a Linux environment using WSL2.
 
 ## Project overview
 
@@ -17,6 +17,10 @@ This project is a basic Solana smart contract (program) built using Anchor with 
 - Built the project using `anchor build`
 - Deployed the contract to a local validator using `anchor deploy`
 - Ran integration tests using `anchor test`
+
+## Reference
+
+- [Installation guide](https://solana.com/docs/intro/installation) on Solana official docs
 
 ## Next steps
 
