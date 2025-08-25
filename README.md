@@ -45,21 +45,21 @@ This project is a basic Solana smart contract (program) built with Anchor using 
 
 ## Manual local deploy (without tests)
 
-Run:
+1. Run:
 
-```bash
-anchor build
-anchor deploy
-```
+    ```bash
+    anchor build
+    anchor deploy
+    ```
 
-Find the Program ID Anchor generated (after first build):
+2. Find the Program ID Anchor generated (after first build):
 
-```bash
-solana address -k target/deploy/<program_name>-keypair.json
-anchor keys list
-```
+    ```bash
+    solana address -k target/deploy/<program_name>-keypair.json
+    anchor keys list
+    ```
 
-Ensure `Anchor.toml` has that Program ID under `[programs.localnet]`.
+    Ensure `Anchor.toml` has that Program ID under `[programs.localnet]`.
 
 ## Optional: devnet deploy (smoke test on a public cluster)
 
