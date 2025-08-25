@@ -18,6 +18,55 @@ This project is a basic Solana smart contract (program) built with Anchor using 
 - Deployed the contract to a local validator using `anchor deploy`
 - Ran integration tests using `anchor test`
 
+## Local test loop
+
+```bash
+# 1) Start a clean local validator in another terminal
+solana-test-validator -r
+
+# 2) Point the CLI at it (once per shell)
+solana config set --url http://127.0.0.1:8899
+solana config get   # confirm
+
+# 3) Build & run tests (auto-deploys to localnet)
+anchor build
+anchor test
+```
+
+- View program logs: `solana logs -u localhost`
+- If another validator is running, stop it or use `anchor test --skip-local-validator`.
+
+## Manual local deploy (without tests)
+
+```bash
+anchor build
+anchor deploy
+```
+
+Find the Program ID Anchor generated (after first build):
+
+```bash
+solana address -k target/deploy/<program_name>-keypair.json
+anchor keys list
+```
+
+Ensure `Anchor.toml` has that Program ID under `[programs.localnet]`.
+
+## Optional: devnet deploy (smoke test on a public cluster)
+
+```bash
+solana config set --url https://api.devnet.solana.com
+solana airdrop 2            # fund your keypair on devnet
+anchor build
+anchor deploy --provider.cluster devnet
+```
+
+## Common fixes
+
+- **Mismatched Program ID** → update `Anchor.toml` to match the keypair you deploy with.
+- **Stale local ledger** → restart validator with `solana-test-validator -r`.
+- **Wrong cluster** → `solana config get` and switch as needed.
+
 ## Reference
 
 - [Installation guide](https://solana.com/docs/intro/installation) on Solana official docs
