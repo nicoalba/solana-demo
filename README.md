@@ -9,6 +9,25 @@ This project is a basic Solana smart contract (program) built with Anchor using 
 - Simple `initialize` instruction as a placeholder
 - Deployment and testing setup for a local Solana validator
 
+## Prerequisites
+
+- **WSL2 + Ubuntu** (or native Linux/macOS)
+- **Solana CLI** (includes `solana-test-validator`)
+- **Rust toolchain** (`rustup`, `cargo`)
+- **Anchor CLI** (installed via `avm`)
+
+### Quick checks
+
+These should all succeed:
+
+```bash
+solana --version
+anchor --version
+rustc --version
+cargo --version
+solana-keygen pubkey
+```
+
 ## Steps taken
 
 - Installed Solana CLI, Rust, and Anchor inside WSL2 (Ubuntu)
