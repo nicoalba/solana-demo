@@ -20,23 +20,32 @@ This project is a basic Solana smart contract (program) built with Anchor using 
 
 ## Local test loop
 
-```bash
-# 1) Start a clean local validator in another terminal
-solana-test-validator -r
+1. Start a clean local validator in another terminal:
 
-# 2) Point the CLI at it (once per shell)
-solana config set --url http://127.0.0.1:8899
-solana config get   # confirm
+    ```bash
+    solana-test-validator -r
+    ```
 
-# 3) Build & run tests (auto-deploys to localnet)
-anchor build
-anchor test
-```
+2. Point the CLI at it (once per shell):
 
-- View program logs: `solana logs -u localhost`
-- If another validator is running, stop it or use `anchor test --skip-local-validator`.
+    ```bash
+    solana config set --url http://127.0.0.1:8899
+    solana config get   # confirm
+    ```
+
+3. Build & run tests (auto-deploys to localnet):
+
+    ```bash
+    anchor build
+    anchor test
+    ```
+
+   - View program logs: `solana logs -u localhost`
+   - If another validator is running, stop it or use `anchor test --skip-local-validator`.
 
 ## Manual local deploy (without tests)
+
+Run:
 
 ```bash
 anchor build
@@ -53,6 +62,8 @@ anchor keys list
 Ensure `Anchor.toml` has that Program ID under `[programs.localnet]`.
 
 ## Optional: devnet deploy (smoke test on a public cluster)
+
+Run:
 
 ```bash
 solana config set --url https://api.devnet.solana.com
