@@ -99,6 +99,7 @@ solana config set --keypair ~/.config/solana/id.json
     solana airdrop 10 -u localhost
     solana balance -u localhost
     ```
+
 4. Build and run tests (auto-deploys to localnet):
 
     1. `cd` into `solana-test-app`:
@@ -111,6 +112,7 @@ solana config set --keypair ~/.config/solana/id.json
 
         ```bash
         anchor build
+        anchor deploy                      # <-- required for Rust tests
         anchor test --skip-local-validator # skipping as we have one running from step 1
         ```
 
