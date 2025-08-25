@@ -2,6 +2,8 @@
 
 This project is a basic Solana smart contract (program) built with Anchor using a Rust template and deployed in a WSL2 Linux environment. It serves as a starting point for learning and experimenting with Solana development.
 
+The program has one instruction: `initialize()`, which takes no accounts, doesn't store state, and just logs `Program log: Greetings from: <PROGRAM_ID>`.
+
 ## Project overview
 
 - Anchor-generated Solana smart contract scaffold
@@ -48,7 +50,7 @@ solana config set --keypair ~/.config/solana/id.json
 
 - Installed Solana CLI, Rust, and Anchor inside WSL2 (Ubuntu)
 - Created the project using Anchor’s Rust test template
-- Moved the project to WSL-native Linux filesystem for compatibility
+- Ran validator ledger on Linux home for compatibility.
 - Built the project using `anchor build`
 - Deployed the contract to a local validator using `anchor deploy`
 - Ran integration tests using `anchor test`
@@ -78,29 +80,29 @@ solana config set --keypair ~/.config/solana/id.json
 2. Point the CLI at it (once per shell):
 
     ```bash
-    solana config set --url http://127.0.0.1:8899
+    solana config set -u localhost
     solana config get   # confirmation
     ```
 
     > **Step explanation**: Updates your Solana CLI default RPC endpoint to your local validator. 2nd command is a sanity check that prints your current config (RPC URL, keypair path, commitment).
 
-3. Airdrop localnet SOL to cover running your local validator (~1.33 SOL + fee):
+3. Fund your local wallet for deploys/transactions (program deploy needs ~1.33 SOL + fee):
 
-    1. Make sure you’re pointed at your local validator:
+    1. Make sure you're pointed at your local validator:
 
-    ```bash
-    solana config set -u localhost
-    solana balance -u localhost
-    ```
+        ```bash
+        solana config set -u localhost
+        solana balance -u localhost
+        ```
 
     2. Airdrop some localnet SOL (do a big one so you’re set):
 
-    ```bash
-    solana airdrop 10 -u localhost
-    solana balance -u localhost
-    ```
+        ```bash
+        solana airdrop 10 -u localhost
+        solana balance -u localhost
+        ```
 
-4. Build and run tests (auto-deploys to localnet):
+4. Build, deploy, and run tests (Rust template):
 
     1. `cd` into `solana-test-app`:
 
@@ -108,79 +110,89 @@ solana config set --keypair ~/.config/solana/id.json
         cd solana-test-app
         ```
 
+        > **Step explanation**: All Anchor commands must be run from the workspace root (the folder that has `Anchor.toml`). 
+
     2. Run:
 
         ```bash
         anchor build
         anchor deploy                      # <-- required for Rust tests
-        anchor test --skip-local-validator # skipping as we have one running from step 1
+        anchor test --skip-local-validator # skipping as we have one running from step 1. Don't skip if none is running.
         ```
 
-      - View program logs: `solana logs -u localhost`
-      - If another validator is running, stop it or use `anchor test --skip-local-validator`.
+        > **Step explanation**: 
+        > `anchor build` compiles your program(s) to Solana BPF and writes artifacts to `target/deploy/` (the `.so` and program keypair) and `target/idl/` (IDL). It *does not* deploy.
+        > `anchor deploy` uploads the compiled `.so` to the cluster your CLI points at (e.g., localnet), creating the upgradeable program + program-data accounts. Rust test template note: `anchor test` doesn't deploy for Rust-only tests. Run `anchor deploy` first (and re-deploy after every `-r` reset).
+        > `anchor test`:
+        > For JS/TS tests: Anchor spins up a throwaway local validator and deploys automatically. (This repo doesn't have any)
+        > Rust test template (this repo): Runs cargo test; deploy first (and re-deploy after every `-r` reset). If your validator is already running, use `--skip-local-validator`.
 
-    > **Step explanation**: All Anchor commands must be run from the workspace root (the folder that has `Anchor.toml`). 
-    >
-    > `anchor build` compiles your program(s) from Rust to Solana BPF, and emits artifacts: `.so` + program keypair under `target/deploy/`, and the IDL under `target/idl/`. It does *not* deploy. 
-    >
-    > `anchor test` builds your program(s), spins up a throwaway local validator, deploys the build to it, then runs your test suite (TS or Rust). State resets every run. If you already have a validator running, use `--skip-local-validator`.
-
-5. Verify success (localnet) from the Anchor workspace (folder with Anchor.toml):
+1. Verify success (localnet) from the Anchor workspace (folder with Anchor.toml):
 
     1. Get your Program ID from the program keypair Anchor generated:
 
-    ```bash
-    PROG=$(solana address -k target/deploy/solana_test_app-keypair.json)
-    echo "$PROG"
-    ```
+        ```bash
+        PROG=$(solana address -k target/deploy/solana_test_app-keypair.json)
+        echo "$PROG"
+        ```
+
+        > **Step explanation**: Program ID is your program’s onchain address (derived from its program keypair); clients/tests use it to call your instructions, and it must match `declare_id!` in `lib.rs` and the [programs.localnet] entry in `Anchor.toml`.
 
     2. Confirm the program is deployed to your running local validator:
     
-    ```bash
-    solana program show "$PROG" -u localhost
-    ```
+        ```bash
+        solana program show "$PROG" -u localhost
+        ```
 
-    Expect to see details under the BPF Upgradeable Loader (program + program-data accounts).
+        Expect to see details under the BPF Upgradeable Loader (program + program-data accounts).
 
-    3. (Optional) List loaded programs and grep yours:
+    3. Check artifacts exist locally:
 
-    ```bash
-    solana program list -u localhost | grep "$PROG"
-    ```
+        ```bash
+        ls -1 target/deploy/solana_test_app.so
+        ls -1 target/idl/solana_test_app.json
+        ```
 
-    4. Check artifacts exist locally:
+        > **Step explanation**: This step confirms your local build artifacts exist—which means the anchor build succeeded.
+        >
+        > - `target/deploy/solana_test_app.so`: The compiled BPF program binary that anchor deploy uploads onchain.
+        > - `target/idl/solana_test_app.json`: The IDL your clients/tools use to call your program.
 
-    ```bash
-    ls -1 target/deploy/solana_test_app.so
-    ls -1 target/idl/solana_test_app.json
-    ```
-
-5. (Optional) See runtime logs (only shows something if tests/clients invoked your instruction):
+2. (Optional) See runtime logs (only shows something if tests/clients invoked your instruction):
 
     ```bash
     solana logs -u localhost | grep -A2 -B2 "$PROG"
     ```
 
+    > **Step explanation**: Streams live transaction logs from your local validator and filters them to only your program's entries (`$PROG`), showing 2 lines before and after each match for context (e.g., `invoke`, your `msg!()`, `success`).
+
 ## (Optional) Manual deploy without tests
 
-Make sure your localnet is running (the validator) and your wallet is funded.
+1. Make sure your localnet is running (validator) and your wallet is funded.
 
-1. Run:
+    ```bash
+    solana config set -u localhost
+    solana airdrop 10 -u localhost
+    ```
+
+2. (For first deploy only) Generate and set the Program ID in `Anchor.toml` and `lib.rs`:
 
     ```bash
     cd solana-test-app
-    anchor build
-    anchor deploy
+    anchor build   # creates target/deploy/*-keypair.json
+    PROG=$(solana address -k target/deploy/solana_test_app-keypair.json)
+    
+    # Paste $PROG into:
+    # - Anchor.toml -> [programs.localnet] solana_test_app = "$PROG"
+    # - programs/solana_test_app/src/lib.rs -> declare_id!("$PROG");
+    anchor build   # rebuild after editing files
     ```
 
-2. For first deploy only: set the Program ID in `Anchor.toml`:
+    >**Note**: If you already built earlier, you can skip the first `anchor build` and just read `$PROG`.
 
-    ```bash
-    # paste this under [programs.localnet]
-    solana address -k target/deploy/solana_test_app-keypair.json
-    ```
+3. Deploy (from the Anchor workspace) with `anchor deploy`.
 
-3. Verify it’s onchain:
+4. Verify it's onchain:
 
     ```bash
     PROG=$(solana address -k target/deploy/solana_test_app-keypair.json)
@@ -189,20 +201,56 @@ Make sure your localnet is running (the validator) and your wallet is funded.
 
 ## Optional: devnet deploy (smoke test on a public cluster)
 
-Run:
+Devnet is a public Solana test cluster. Keep this if you want a shareable onchain address. 
 
-```bash
-solana config set --url https://api.devnet.solana.com
-solana airdrop 2            # fund your keypair on devnet
-anchor build
-anchor deploy --provider.cluster devnet
-```
+
+1. Point the CLI to devnet and fund your wallet (rate-limited):
+
+    ```bash
+    solana config set -u https://api.devnet.solana.com
+    solana airdrop 2
+    ```
+
+2. Build and deploy (from the Anchor workspace):
+
+    ```bash
+    cd solana-test-app
+    anchor build
+    anchor deploy --provider.cluster devnet
+    ```
+
+3. (Optional) Publish the IDL so clients/explorers can fetch it:
+
+    ```bash
+    PROG=$(solana address -k target/deploy/solana_test_app-keypair.json)
+
+    # First time:
+    anchor idl init -f target/idl/solana_test_app.json "$PROG" --provider.cluster devnet
+
+    # Later updates:
+    # anchor idl upgrade -f target/idl/solana_test_app.json "$PROG" --provider.cluster devnet
+    ```
+
+4. Verify:
+
+    ```bash
+    solana program show "$PROG" -u devnet
+    ```
+
+    When you’re done, switch back to localnet:
+
+    ```bash
+    solana config set -u localhost
+    ```
 
 ## Common fixes
 
-- **Mismatched Program ID** → update `Anchor.toml` to match the keypair you deploy with.
-- **Stale local ledger** → restart validator with `solana-test-validator -r`.
-- **Wrong cluster** → `solana config get` and switch as needed.
+- **Program ID mismatch** → make the ID the same in `Anchor.toml`, `lib.rs` (`declare_id!`), and any tests; then `anchor build` again.
+- **Not in workspace** → run commands from the folder with `Anchor.toml`.
+- **Wrong cluster** → `solana config get`; if needed: `solana config set -u localhost`.
+- **Insufficient funds** → `solana airdrop 10 -u localhost`.
+- **Stale ledger / WSL path issues** → restart with `solana-test-validator -r --ledger ~/.solana-ledgers/demo`.
+- **If you see OpenSSL/pkg-config build errors on Ubuntu** → `sudo apt install -y build-essential pkg-config libssl-dev`.
 
 ## Reference
 
