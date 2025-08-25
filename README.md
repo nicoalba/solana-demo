@@ -1,5 +1,8 @@
 # solana-demo
 
+
+
+
 This project is a basic Solana smart contract (program) built with Anchor using a Rust template and deployed in a WSL2 Linux environment. It serves as a starting point for learning and experimenting with Solana development.
 
 The program has one instruction: `initialize()`, which takes no accounts, doesn't store state, and just logs `Program log: Greetings from: <PROGRAM_ID>`.
@@ -71,11 +74,10 @@ solana config set --keypair ~/.config/solana/id.json
     solana-test-validator -r --ledger ~/.solana-ledgers/demo
     ```
 
-    > **Step explanation**: `solana-test-validator` spins up a single-node Solana cluster locally (RPC + ledger) on your machine. It behaves like a tiny, private Solana network so you can deploy and test programs fast, with free airdrops.
-    >
-    > `-r` wipes the local ledger directory (usually `./test-ledger` in your current folder) before starting. This gives you a clean slate—no leftover accounts, PDAs, or SOL balances from previous runs.
-    >
-    >What starts up: An RPC on `http://127.0.0.1:8899` (what the CLI and your tests talk to, known as your localnet), a WebSocket on `:8900` (used by subscriptions/logs), a built-in faucet so `solana airdrop <amount>` works locally, and a fresh on-disk ledger in your current directory (deleted next time you use `-r`).
+    > **Step explanation**: 
+    > - `solana-test-validator` spins up a single-node Solana cluster locally (RPC + ledger) on your machine. It behaves like a tiny, private Solana network so you can deploy and test programs fast, with free airdrops.
+    > - `-r` wipes the local ledger directory (usually `./test-ledger` in your current folder) before starting. This gives you a clean slate—no leftover accounts, PDAs, or SOL balances from previous runs.
+    > - What starts up: An RPC on `http://127.0.0.1:8899` (what the CLI and your tests talk to, known as your localnet), a WebSocket on `:8900` (used by subscriptions/logs), a built-in faucet so `solana airdrop <amount>` works locally, and a fresh on-disk ledger in your current directory (deleted next time you use `-r`).
 
 2. Point the CLI at it (once per shell):
 
@@ -121,9 +123,9 @@ solana config set --keypair ~/.config/solana/id.json
         ```
 
         > **Step explanation**: 
-        > `anchor build` compiles your program(s) to Solana BPF and writes artifacts to `target/deploy/` (the `.so` and program keypair) and `target/idl/` (IDL). It *does not* deploy.
-        > `anchor deploy` uploads the compiled `.so` to the cluster your CLI points at (e.g., localnet), creating the upgradeable program + program-data accounts. Rust test template note: `anchor test` doesn't deploy for Rust-only tests. Run `anchor deploy` first (and re-deploy after every `-r` reset).
-        > `anchor test`:
+        > - `anchor build` compiles your program(s) to Solana BPF and writes artifacts to `target/deploy/` (the `.so` and program keypair) and `target/idl/` (IDL). It *does not* deploy.
+        > - `anchor deploy` uploads the compiled `.so` to the cluster your CLI points at (e.g., localnet), creating the upgradeable program + program-data accounts. Rust test template note: `anchor test` doesn't deploy for Rust-only tests. Run `anchor deploy` first (and re-deploy after every `-r` reset).
+        > - `anchor test`:
         > For JS/TS tests: Anchor spins up a throwaway local validator and deploys automatically. (This repo doesn't have any)
         > Rust test template (this repo): Runs cargo test; deploy first (and re-deploy after every `-r` reset). If your validator is already running, use `--skip-local-validator`.
 
@@ -154,7 +156,6 @@ solana config set --keypair ~/.config/solana/id.json
         ```
 
         > **Step explanation**: This step confirms your local build artifacts exist—which means the anchor build succeeded.
-        >
         > - `target/deploy/solana_test_app.so`: The compiled BPF program binary that anchor deploy uploads onchain.
         > - `target/idl/solana_test_app.json`: The IDL your clients/tools use to call your program.
 
