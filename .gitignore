@@ -1,0 +1,16 @@
+# Anchor/Solana build + local chain
+**/target/
+**/test-ledger/
+**/validator-ledger/
+**/.anchor/
+
+# Node
+**/node_modules/
+
+# Keys (never commit secrets)
+**/*-keypair.json
+**/id.json
+
+# Misc
+*.log
+.DS_Store

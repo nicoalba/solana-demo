@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 state or perform any complex operation; it simply logs a greeting message when the `initialize` function is called.
 */
 
-declare_id!("HD3sxGps2pr36KvHZY4JjaQgG9otncF9SCovGvTvhvdp");
+declare_id!("EqYLJzQSwpqLa1ByR43TjARd8sxEsyaYnM8mGEGAWmg1");
 
 #[program]
 pub mod solana_test_app {
