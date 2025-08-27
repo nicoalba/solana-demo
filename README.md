@@ -51,12 +51,12 @@ solana config set --keypair ~/.config/solana/id.json
 
 ## Steps taken
 
-- Installed Solana CLI, Rust, and Anchor inside WSL2 (Ubuntu)
-- Created the project using Anchor’s Rust test template
-- Ran validator ledger on Linux home for compatibility.
-- Built the project using `anchor build`
-- Deployed the contract to a local validator using `anchor deploy`
-- Ran integration tests using `anchor test`
+- Installed Solana CLI, Rust, and Anchor inside WSL2 (Ubuntu).
+- Created the project using Anchor’s Rust test template.
+- Ran the local validator, and stored the ledger under `~/.solana-ledgers/...` for WSL2 compatibility.
+- Built the contract using `anchor build`.
+- Deployed the contract to a local validator using `anchor deploy`.
+- Ran integration tests using `anchor test`.
 
 ## Local test loop
 
