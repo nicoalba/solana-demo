@@ -1,18 +1,15 @@
 # solana-demo
 
-
-
-
 This project is a basic Solana smart contract (program) built with Anchor using a Rust template and deployed in a WSL2 Linux environment. It serves as a starting point for learning and experimenting with Solana development.
 
 The program has one instruction: `initialize()`, which takes no accounts, doesn't store state, and just logs `Program log: Greetings from: <PROGRAM_ID>`.
 
 ## Project overview
 
-- Anchor-generated Solana smart contract scaffold
-- Rust-based test framework (via `anchor init --test-template rust`)
-- Simple `initialize` instruction as a placeholder
-- Deployment and testing setup for a local Solana validator
+- Single `initialize()` instruction (no accounts/state; just logs a greeting)
+- Local development on localnet (single-node validator; ledger stored in Linux)
+- Anchor workspace with generated IDL and deploy artifacts under `target/`
+- README documents build/deploy/test
 
 ## Prerequisites
 
