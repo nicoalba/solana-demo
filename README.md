@@ -2,14 +2,21 @@
 
 This project is a basic Solana smart contract (program) built with Anchor using a Rust template and deployed in a WSL2 Linux environment. It serves as a starting point for learning and experimenting with Solana development.
 
-The program has one instruction: `initialize()`, which takes no accounts, doesn't store state, and just logs `Program log: Greetings from: <PROGRAM_ID>`.
-
 ## Project overview
 
-- Single `initialize()` instruction (no accounts/state; just logs a greeting)
+- Single `initialize()` instruction (no accoiutns/state, just logs `Program log: Greetings from: <PROGRAM_ID>`)
 - Local development on localnet (single-node validator; ledger stored in Linux)
 - Anchor workspace with generated IDL and deploy artifacts under `target/`
 - README documents build/deploy/test
+
+## Steps taken
+
+- Installed Solana CLI, Rust, and Anchor inside WSL2 (Ubuntu).
+- Created the project using Anchor's Rust test template.
+- Ran the local validator, and stored the ledger under `~/.solana-ledgers/...` for WSL2 compatibility.
+- Built the contract using `anchor build`.
+- Deployed the contract to a local validator using `anchor deploy`.
+- Ran integration tests using `anchor test`.
 
 ## Prerequisites
 
@@ -45,15 +52,6 @@ solana-keygen new        # accept defaults; store the seed phrase safely
 solana-keygen pubkey     # now prints your address
 solana config set --keypair ~/.config/solana/id.json
 ```
-
-## Steps taken
-
-- Installed Solana CLI, Rust, and Anchor inside WSL2 (Ubuntu).
-- Created the project using Anchor’s Rust test template.
-- Ran the local validator, and stored the ledger under `~/.solana-ledgers/...` for WSL2 compatibility.
-- Built the contract using `anchor build`.
-- Deployed the contract to a local validator using `anchor deploy`.
-- Ran integration tests using `anchor test`.
 
 ## Local test loop
 
@@ -126,7 +124,7 @@ solana config set --keypair ~/.config/solana/id.json
         > For JS/TS tests: Anchor spins up a throwaway local validator and deploys automatically. (This repo doesn't have any)
         > Rust test template (this repo): Runs cargo test; deploy first (and re-deploy after every `-r` reset). If your validator is already running, use `--skip-local-validator`.
 
-1. Verify success (localnet) from the Anchor workspace (folder with Anchor.toml):
+5. Verify success (localnet) from the Anchor workspace (folder with Anchor.toml):
 
     1. Get your Program ID from the program keypair Anchor generated:
 
@@ -156,7 +154,7 @@ solana config set --keypair ~/.config/solana/id.json
         > - `target/deploy/solana_test_app.so`: The compiled BPF program binary that anchor deploy uploads onchain.
         > - `target/idl/solana_test_app.json`: The IDL your clients/tools use to call your program.
 
-2. (Optional) See runtime logs (only shows something if tests/clients invoked your instruction):
+6. (Optional) See runtime logs (only shows something if tests/clients invoked your instruction):
 
     ```bash
     solana logs -u localhost | grep -A2 -B2 "$PROG"
